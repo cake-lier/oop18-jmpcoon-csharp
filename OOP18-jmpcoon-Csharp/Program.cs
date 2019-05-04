@@ -1,6 +1,6 @@
-﻿using System;
+﻿using jmpcoon.model;
 
-namespace OOP18jmpcoonCsharp
+namespace jmpcoon
 {
     class MainClass
     {
