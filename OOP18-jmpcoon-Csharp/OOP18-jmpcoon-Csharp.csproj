@@ -42,6 +42,30 @@
     <Compile Include="Program.cs" />
     <Compile Include="model\ForwardingMultimap.cs" />
     <Compile Include="model\world\World.cs" />
+    <Compile Include="model\world\IUpdatableWorld.cs" />
+    <Compile Include="model\entities\EntityProperties.cs" />
+    <Compile Include="model\entities\MovementType.cs" />
+    <Compile Include="model\entities\UnmodifiableEntity.cs" />
+    <Compile Include="model\world\CollisionEvent.cs" />
+    <Compile Include="model\world\IWorld.cs" />
+    <Compile Include="model\world\GameState.cs" />
+    <Compile Include="model\entities\IEntity.cs" />
+    <Compile Include="model\entities\Player.cs" />
+    <Compile Include="model\entities\IEntityProperties.cs" />
+    <Compile Include="model\entities\EntityType.cs" />
+    <Compile Include="model\entities\BodyShape.cs" />
+    <Compile Include="model\entities\PowerUpType.cs" />
+    <Compile Include="model\world\EntityCreator.cs" />
+    <Compile Include="model\entities\Platform.cs" />
+    <Compile Include="model\entities\Ladder.cs" />
+    <Compile Include="model\entities\RollingEnemy.cs" />
+    <Compile Include="model\entities\WalkingEnemy.cs" />
+    <Compile Include="model\entities\EnemyGenerator.cs" />
+    <Compile Include="model\entities\PowerUp.cs" />
+    <Compile Include="model\entities\AbstractEntityBuilder.cs" />
+    <Compile Include="model\entities\EntityBuilderUtils.cs" />
+    <Compile Include="model\world\IModifiableWorld.cs" />
+    <Compile Include="model\world\EntityCreatorUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -49,6 +73,7 @@
   <ItemGroup>
     <Folder Include="model\" />
     <Folder Include="model\world\" />
+    <Folder Include="model\entities\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
