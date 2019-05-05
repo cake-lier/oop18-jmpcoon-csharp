@@ -2,7 +2,7 @@
 
 namespace jmpcoon.model.entities
 {
-    public interface IEntity
+    public interface IUnmodifiableEntity
     {
         Tuple<double, double> Position { get; }
 
@@ -14,10 +14,12 @@ namespace jmpcoon.model.entities
 
         EntityState State { get; }
 
-        bool Alive { get; }
-
         Tuple<double, double> Dimensions { get; }
 
+        bool Dynamic { get; }
+
         Tuple<double, double> Velocity { get; }
+
+        PowerUpType? PowerUpType { get; }
     }
 }

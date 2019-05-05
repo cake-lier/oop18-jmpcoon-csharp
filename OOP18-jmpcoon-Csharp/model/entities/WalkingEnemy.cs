@@ -1,6 +1,6 @@
 ﻿namespace jmpcoon.model.entities
 {
-    public class WalkingEnemy : IEntity
+    public class WalkingEnemy : IDynamicEntity
     {
         public WalkingEnemy(double walkingRange)
         {

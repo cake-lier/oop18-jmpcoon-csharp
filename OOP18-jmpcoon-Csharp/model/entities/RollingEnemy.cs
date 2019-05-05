@@ -1,6 +1,6 @@
 ﻿namespace jmpcoon.model.entities
 {
-    public class RollingEnemy : IEntity
+    public class RollingEnemy : IDynamicEntity
     {
         public RollingEnemy()
         {

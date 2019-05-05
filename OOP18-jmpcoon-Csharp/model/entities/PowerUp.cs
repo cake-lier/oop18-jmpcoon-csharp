@@ -5,5 +5,7 @@
         public PowerUp(PowerUpType type)
         {
         }
+
+        public PowerUpType? PowerUpType { get; internal set; }
     }
 }
