@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using jmpcoon.model.entities;
 
 namespace jmpcoon.model.world
 {
     public interface IUpdatableWorld
     {
-        Tuple<double, double> Dimensions { get; }
+        (double Width, double Height) Dimensions { get; }
 
         int Score { get; }
 

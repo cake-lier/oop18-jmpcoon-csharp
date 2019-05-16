@@ -53,7 +53,6 @@
     <Compile Include="model\entities\Player.cs" />
     <Compile Include="model\entities\IEntityProperties.cs" />
     <Compile Include="model\entities\EntityType.cs" />
-    <Compile Include="model\entities\BodyShape.cs" />
     <Compile Include="model\entities\PowerUpType.cs" />
     <Compile Include="model\world\EntityCreator.cs" />
     <Compile Include="model\entities\Platform.cs" />
@@ -65,7 +64,23 @@
     <Compile Include="model\entities\AbstractEntityBuilder.cs" />
     <Compile Include="model\entities\EntityBuilderUtils.cs" />
     <Compile Include="model\world\IModifiableWorld.cs" />
-    <Compile Include="model\world\EntityCreatorUtils.cs" />
+    <Compile Include="model\entities\DynamicEntity.cs" />
+    <Compile Include="model\entities\StaticEntity.cs" />
+    <Compile Include="model\entities\EntityState.cs" />
+    <Compile Include="model\entities\AbstractEntity.cs" />
+    <Compile Include="Objects.cs" />
+    <Compile Include="model\entities\IUnmodifiableEntity.cs" />
+    <Compile Include="model\physics\IPhysicalBody.cs" />
+    <Compile Include="model\physics\AbstractPhysicalBody.cs" />
+    <Compile Include="model\physics\StaticPhysicalBody.cs" />
+    <Compile Include="model\physics\DynamicPhysicalBody.cs" />
+    <Compile Include="model\physics\PlayerPhysicalBody.cs" />
+    <Compile Include="model\entities\IEntityBuilder.cs" />
+    <Compile Include="model\physics\BodyShape.cs" />
+    <Compile Include="model\entities\MovementValues.cs" />
+    <Compile Include="model\world\IWorldFactory.cs" />
+    <Compile Include="model\world\WorldFactory.cs" />
+    <Compile Include="model\world\INotifiableWorld.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -74,6 +89,7 @@
     <Folder Include="model\" />
     <Folder Include="model\world\" />
     <Folder Include="model\entities\" />
+    <Folder Include="model\physics\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
