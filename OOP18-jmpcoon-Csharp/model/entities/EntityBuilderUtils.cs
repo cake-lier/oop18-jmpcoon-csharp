@@ -12,9 +12,10 @@ namespace jmpcoon.model.entities
         {
             protected override EnemyGenerator BuildEntity()
             {
-                if (GetWorld() != null)
+                if (GetPhysicalFactory() != null && GetWorld() != null)
                 {
-                    return new EnemyGenerator(CreateStaticPhysicalBody(), GetWorld());
+                    return new EnemyGenerator(CreateStaticPhysicalBody(EntityType.ENEMY_GENERATOR), GetPhysicalFactory(),
+                                                                       GetWorld());
                 }
                 throw new InvalidOperationException(NOT_REQ_FIELDS);
             }
@@ -23,7 +24,7 @@ namespace jmpcoon.model.entities
         public static IEntityBuilder<Ladder> GetLadderBuilder() => new LadderBuilder();
 
         private class LadderBuilder : AbstractEntityBuilder<Ladder> {
-            protected override Ladder BuildEntity() => new Ladder(CreateStaticPhysicalBody());
+            protected override Ladder BuildEntity() => new Ladder(CreateStaticPhysicalBody(EntityType.LADDER));
         }
 
         public static IEntityBuilder<Player> GetPlayerBuilder() => new PlayerBuilder();
@@ -35,7 +36,7 @@ namespace jmpcoon.model.entities
         public static IEntityBuilder<Platform> GetPlatformBuilder() => new PlatformBuilder();
 
         private class PlatformBuilder : AbstractEntityBuilder<Platform> {
-            protected override Platform BuildEntity() => new Platform(CreateStaticPhysicalBody());
+            protected override Platform BuildEntity() => new Platform(CreateStaticPhysicalBody(EntityType.PLATFORM));
         }
 
         public static IEntityBuilder<PowerUp> GetPowerUpBuilder() => new PowerUpBuilder();
@@ -45,7 +46,7 @@ namespace jmpcoon.model.entities
             {
                 if (GetPowerUpType().HasValue)
                 {
-                    return new PowerUp(CreateStaticPhysicalBody(), GetPowerUpType().Value);
+                    return new PowerUp(CreateStaticPhysicalBody(EntityType.POWERUP), GetPowerUpType().Value);
                 }
                 throw new InvalidOperationException(NOT_REQ_FIELDS);
             }
@@ -54,7 +55,8 @@ namespace jmpcoon.model.entities
         public static IEntityBuilder<RollingEnemy> GetRollingEnemyBuilder() => new RollingEnemyBuilder();
 
         private class RollingEnemyBuilder : AbstractEntityBuilder<RollingEnemy> {
-            protected override RollingEnemy BuildEntity() => new RollingEnemy(CreateDynamicPhysicalBody());
+            protected override RollingEnemy BuildEntity()
+                => new RollingEnemy(CreateDynamicPhysicalBody(EntityType.ROLLING_ENEMY));
         }
 
         public static IEntityBuilder<WalkingEnemy> GetWalkingEnemyBuilder() => new WalkingEnemyBuilder();
@@ -64,7 +66,7 @@ namespace jmpcoon.model.entities
             {
                 if (GetWalkingRange().HasValue)
                 {
-                    return new WalkingEnemy(CreateDynamicPhysicalBody(), GetWalkingRange().Value);
+                    return new WalkingEnemy(CreateDynamicPhysicalBody(EntityType.WALKING_ENEMY), GetWalkingRange().Value);
                 }
                 throw new InvalidOperationException(NOT_REQ_FIELDS);
             }

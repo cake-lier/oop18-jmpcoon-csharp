@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using jmpcoon.model.physics;
 
 namespace jmpcoon.model.entities
 {

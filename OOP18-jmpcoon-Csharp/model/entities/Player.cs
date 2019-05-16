@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using jmpcoon.model.physics;
 
 namespace jmpcoon.model.entities
 {

@@ -1,4 +1,6 @@
-﻿namespace jmpcoon.model.entities
+﻿using jmpcoon.model.physics;
+
+namespace jmpcoon.model.entities
 {
     public interface IUnmodifiableEntity
     {

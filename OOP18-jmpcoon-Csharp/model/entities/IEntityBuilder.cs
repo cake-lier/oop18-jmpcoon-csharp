@@ -1,9 +1,12 @@
-﻿using jmpcoon.model.world;
+﻿using jmpcoon.model.physics;
+using jmpcoon.model.world;
 
 namespace jmpcoon.model.entities
 {
     public interface IEntityBuilder<out TEntity> where TEntity : IEntity
     {
+        IEntityBuilder<TEntity> SetFactory(IPhysicalFactory factory);
+
         IEntityBuilder<TEntity> SetPosition((double X, double Y) center);
 
         IEntityBuilder<TEntity> SetDimensions((double Width, double Height) dimensions);

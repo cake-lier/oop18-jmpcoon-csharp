@@ -9,11 +9,13 @@ namespace jmpcoon.model.entities
         private const int DELTA = 280;
 
         private readonly IModifiableWorld world;
+        private readonly IPhysicalFactory factory;
         private int count;
 
-        public EnemyGenerator(StaticPhysicalBody body, IModifiableWorld world) : base(body)
+        public EnemyGenerator(StaticPhysicalBody body, IPhysicalFactory factory, IModifiableWorld world) : base(body)
         {
             this.world = world;
+            this.factory = factory;
             count = -1;
         }
 
@@ -41,6 +43,7 @@ namespace jmpcoon.model.entities
         }
 
         private RollingEnemy CreateRollingEnemy() => EntityBuilderUtils.GetRollingEnemyBuilder()
+                                                                       .SetFactory(factory)
                                                                        .SetDimensions(ROLLING_ENEMY_DIMENSIONS)
                                                                        .SetAngle(0.0)
                                                                        .SetPosition(Position)

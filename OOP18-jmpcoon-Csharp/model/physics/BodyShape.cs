@@ -1,4 +1,4 @@
-﻿namespace jmpcoon.model.entities
+﻿namespace jmpcoon.model.physics
 {
     public enum BodyShape
     {

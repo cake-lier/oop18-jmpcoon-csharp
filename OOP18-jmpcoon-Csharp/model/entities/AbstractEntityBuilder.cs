@@ -17,6 +17,7 @@ namespace jmpcoon.model.entities
         private PowerUpType? powerUpType;
         private double? walkingRange;
         private IModifiableWorld world;
+        private IPhysicalFactory factory;
         private bool built;
 
         protected AbstractEntityBuilder()
@@ -55,6 +56,12 @@ namespace jmpcoon.model.entities
             return this;
         }
 
+        public IEntityBuilder<TEntity> SetFactory(IPhysicalFactory factory)
+        {
+            this.factory = factory;
+            return this;
+        }
+
         public IEntityBuilder<TEntity> SetPowerUpType(PowerUpType? powerUpType)
         {
             this.powerUpType = powerUpType;
@@ -88,14 +95,19 @@ namespace jmpcoon.model.entities
 
         protected IModifiableWorld GetWorld() => world;
 
-        protected StaticPhysicalBody CreateStaticPhysicalBody()
-            => new StaticPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width, dimensions.Value.Height);
+        protected IPhysicalFactory GetPhysicalFactory() => factory;
 
-        protected DynamicPhysicalBody CreateDynamicPhysicalBody()
-            => new DynamicPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width, dimensions.Value.Height);
+        protected StaticPhysicalBody CreateStaticPhysicalBody(EntityType type)
+            => factory.CreateStaticPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width, dimensions.Value.Height,
+                                                type, powerUpType);
+
+        protected DynamicPhysicalBody CreateDynamicPhysicalBody(EntityType type)
+            => factory.CreateDynamicPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width,
+                                                 dimensions.Value.Height, type);
 
         protected PlayerPhysicalBody CreatePlayerPhysicalBody()
-            => new PlayerPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width, dimensions.Value.Height);
+            => factory.CreatePlayerPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width,
+                                                dimensions.Value.Height);
 
         private void CheckIfBuildable()
         {

@@ -81,6 +81,12 @@
     <Compile Include="model\world\IWorldFactory.cs" />
     <Compile Include="model\world\WorldFactory.cs" />
     <Compile Include="model\world\INotifiableWorld.cs" />
+    <Compile Include="model\physics\IPhysicalFactory.cs" />
+    <Compile Include="model\physics\PhysicalFactory.cs" />
+    <Compile Include="model\physics\PhysicalWorld.cs" />
+    <Compile Include="model\physics\IUpdatablePhysicalWorld.cs" />
+    <Compile Include="model\physics\IPhysicalWorld.cs" />
+    <Compile Include="model\physics\PhysicsUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

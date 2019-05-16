@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using jmpcoon.model.entities;
+using jmpcoon.model.physics;
 
 namespace jmpcoon.model.world
 {
@@ -13,6 +14,8 @@ namespace jmpcoon.model.world
         private const int WALKING_POINTS = 100;
         private const string NO_INIT_MSG = "It's needed to initialize this world by initLevel() before using it";
 
+        private readonly IPhysicalFactory physicsFactory;
+        private readonly IUpdatablePhysicalWorld innerWorld;
         private readonly ClassToInstanceMultimap<IEntity> aliveEntities;
         private readonly ClassToInstanceMultimap<IEntity> deadEntities;
         private readonly Queue<CollisionEvent> currentEvents;
@@ -25,7 +28,9 @@ namespace jmpcoon.model.world
 
         public World()
         {
+            physicsFactory = new PhysicalFactory();
             Dimensions = (Width: WORLD_WIDTH, Height: WORLD_HEIGHT);
+            innerWorld = physicsFactory.CreatePhysicalWorld(this, Dimensions.Width, Dimensions.Height);
             aliveEntities = new ClassToInstanceMultimap<IEntity>();
             deadEntities = new ClassToInstanceMultimap<IEntity>();
             currentEvents = new Queue<CollisionEvent>();
@@ -79,8 +84,28 @@ namespace jmpcoon.model.world
 
         public bool MovePlayer(MovementType movement)
         {
-            player?.Move(movement);
-            return true;
+            CheckInitialization();
+            if (player != null)
+            {
+                IPhysicalBody playerBody = player.PhysicalBody;
+                EntityState playerState = playerBody.State;
+                bool isPlayerAtBottom(IPhysicalBody ladderBody) => PhysicsUtils.IsBodyAtBottomHalf(playerBody, ladderBody);
+                if (currentState == GameState.IS_GOING
+                    && ((movement == MovementType.JUMP && IsBodyStanding(playerBody))
+                        || (movement == MovementType.CLIMB_UP
+                            && (IsBodyInFrontLadder(playerBody, isPlayerAtBottom)
+                                || playerState == EntityState.CLIMBING_UP || playerState == EntityState.CLIMBING_DOWN))
+                        || (movement == MovementType.CLIMB_DOWN
+                            && (IsBodyInFrontLadder(playerBody, (e) => !isPlayerAtBottom(e))
+                                || playerState == EntityState.CLIMBING_UP || playerState == EntityState.CLIMBING_DOWN))
+                        || ((movement == MovementType.MOVE_LEFT || movement == MovementType.MOVE_RIGHT)
+                            && playerState != EntityState.CLIMBING_DOWN && playerState != EntityState.CLIMBING_UP)))
+                {
+                    player.Move(movement);
+                    return true;
+                }
+            }
+            return false;
         }
 
         public int GetPlayerLives() => player?.Lives ?? 0;
@@ -90,11 +115,13 @@ namespace jmpcoon.model.world
             CheckInitialization();
             currentEvents.Clear();
             deadEntities.Clear();
+            innerWorld.Update();
             aliveEntities.AsParallel().ForAll(list => list.Value.AsParallel().ForAll(entity => {
                 if (!entity.Alive)
                 {
                     deadEntities.PutInstance(list.Key, entity);
                     aliveEntities.Remove(list.Key, entity);
+                    innerWorld.RemoveBody(entity.PhysicalBody);
                 }
             }));
             if (currentState == GameState.IS_GOING && player != null && !player.Alive)
@@ -107,6 +134,26 @@ namespace jmpcoon.model.world
 
         public void AddGeneratedRollingEnemy(RollingEnemy rollingEnemy)
             => aliveEntities.PutInstance(typeof(RollingEnemy), rollingEnemy);
+
+        public void NotifyCollision(CollisionEvent collisionType)
+        {
+            switch (collisionType)
+            {
+                case CollisionEvent.ROLLING_ENEMY_KILLED:
+                    Score += ROLLING_POINTS;
+                    break;
+                case CollisionEvent.WALKING_ENEMY_KILLED:
+                    Score += WALKING_POINTS;
+                    break;
+                case CollisionEvent.GOAL_HIT:
+                    currentState = GameState.PLAYER_WON;
+                    break;
+                case CollisionEvent.PLAYER_KILLED:
+                    currentState = GameState.GAME_OVER;
+                    break;
+            }
+            currentEvents.Enqueue(collisionType);
+        }
 
         private void CheckInitialization()
         {
@@ -134,24 +181,25 @@ namespace jmpcoon.model.world
                                                                       Type key) where E : IEntity 
             => multimap.GetInstances<E>(key).Select(mapper);
 
-        public void NotifyCollision(CollisionEvent collisionType)
+        private bool IsBodyStanding(IPhysicalBody body)
         {
-            switch (collisionType)
-            {
-                case CollisionEvent.ROLLING_ENEMY_KILLED:
-                    Score += ROLLING_POINTS;
-                    break;
-                case CollisionEvent.WALKING_ENEMY_KILLED:
-                    Score += WALKING_POINTS;
-                    break;
-                case CollisionEvent.GOAL_HIT:
-                    currentState = GameState.PLAYER_WON;
-                    break;
-                case CollisionEvent.PLAYER_KILLED:
-                    currentState = GameState.GAME_OVER;
-                    break;
-            }
-            currentEvents.Enqueue(collisionType);
+            ICollection<IPhysicalBody> platformsBodies = aliveEntities.GetInstances<Platform>(typeof(Platform))
+                                                                      .Select(e => e.PhysicalBody)
+                                                                      .ToHashSet();
+            return innerWorld.GetCollidingBodies(body)
+                             .Where(collision => platformsBodies.Contains(collision.Body))
+                             .Any(platformStand => PhysicsUtils.IsBodyOnTop(body, platformStand.Body,
+                                                                                  platformStand.CollisionPoint))
+                   && body.State != EntityState.JUMPING;
+        }
+
+        private bool IsBodyInFrontLadder(IPhysicalBody body, Predicate<IPhysicalBody> where)
+        {
+            return aliveEntities.GetInstances<Ladder>(typeof(Ladder)).Select(e => e.PhysicalBody)
+                                                                     .Any(ladderBody =>
+                                                                          innerWorld.AreBodiesInContact(body, ladderBody)
+                                                                          && where.Invoke(ladderBody)
+                                                                          && PhysicsUtils.IsBodyInside(body, ladderBody));
         }
     }
 }

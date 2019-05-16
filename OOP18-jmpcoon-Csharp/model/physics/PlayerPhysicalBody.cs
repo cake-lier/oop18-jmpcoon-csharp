@@ -1,6 +1,6 @@
-﻿using jmpcoon.model.physics;
+﻿using jmpcoon.model.entities;
 
-namespace jmpcoon.model.entities
+namespace jmpcoon.model.physics
 {
     public class PlayerPhysicalBody : DynamicPhysicalBody
     {
