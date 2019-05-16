@@ -1,9 +1,13 @@
-﻿namespace jmpcoon.model.entities
+﻿using jmpcoon.model.physics;
+
+namespace jmpcoon.model.entities
 {
-    public class Ladder : IEntity
+    public class Ladder : StaticEntity
     {
-        public Ladder()
+        public Ladder(StaticPhysicalBody body) : base(body)
         {
         }
+
+        public override EntityType Type => EntityType.LADDER;
     }
 }

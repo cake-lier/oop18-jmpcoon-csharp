@@ -1,25 +1,21 @@
-﻿using jmpcoon.model.physics;
+﻿using jmpcoon.model.entities;
 
-namespace jmpcoon.model.entities
+namespace jmpcoon.model.physics
 {
-    public interface IEntity
+    public interface IPhysicalBody
     {
         (double X, double Y) Position { get; }
 
-        BodyShape Shape { get; }
-
         double Angle { get; }
-
-        EntityType Type { get; }
 
         EntityState State { get; }
 
-        bool Alive { get; }
+        bool Exists { get; }
+
+        BodyShape Shape { get; }
 
         (double Width, double Height) Dimensions { get; }
 
         (double X, double Y) Velocity { get; }
-
-        IPhysicalBody PhysicalBody { get; }
     }
 }

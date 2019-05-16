@@ -1,9 +1,13 @@
-﻿namespace jmpcoon.model.entities
-{
-    public class Platform : IEntity
+﻿using jmpcoon.model.physics;
+
+namespace jmpcoon.model.entities
+{ 
+public class Platform : StaticEntity
     {
-        public Platform()
+        public Platform(StaticPhysicalBody body) : base(body)
         {
         }
+
+        public override EntityType Type => EntityType.PLATFORM;
     }
 }

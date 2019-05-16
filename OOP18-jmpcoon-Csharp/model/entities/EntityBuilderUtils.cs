@@ -6,7 +6,7 @@ namespace jmpcoon.model.entities
     {
         private const string NOT_REQ_FIELDS = "Not all the fields necessary to build have been initialized";
 
-        public static AbstractEntityBuilder<EnemyGenerator> GetEnemyGeneratorBuilder() => new EnemyGeneratorBuilder();
+        public static IEntityBuilder<EnemyGenerator> GetEnemyGeneratorBuilder() => new EnemyGeneratorBuilder();
 
         private class EnemyGeneratorBuilder : AbstractEntityBuilder<EnemyGenerator>
         {
@@ -14,57 +14,57 @@ namespace jmpcoon.model.entities
             {
                 if (GetWorld() != null)
                 {
-                    return new EnemyGenerator(GetWorld());
+                    return new EnemyGenerator(CreateStaticPhysicalBody(), GetWorld());
                 }
                 throw new InvalidOperationException(NOT_REQ_FIELDS);
             }
         }
 
-        public static AbstractEntityBuilder<Ladder> GetLadderBuilder() => new LadderBuilder();
+        public static IEntityBuilder<Ladder> GetLadderBuilder() => new LadderBuilder();
 
         private class LadderBuilder : AbstractEntityBuilder<Ladder> {
-            protected override Ladder BuildEntity() => new Ladder();
+            protected override Ladder BuildEntity() => new Ladder(CreateStaticPhysicalBody());
         }
 
-        public static AbstractEntityBuilder<Player> GetPlayerBuilder() => new PlayerBuilder();
+        public static IEntityBuilder<Player> GetPlayerBuilder() => new PlayerBuilder();
 
         private class PlayerBuilder : AbstractEntityBuilder<Player> {
-            protected override Player BuildEntity() => new Player();
+            protected override Player BuildEntity() => new Player(CreatePlayerPhysicalBody());
         }
 
-        public static AbstractEntityBuilder<Platform> GetPlatformBuilder() => new PlatformBuilder();
+        public static IEntityBuilder<Platform> GetPlatformBuilder() => new PlatformBuilder();
 
         private class PlatformBuilder : AbstractEntityBuilder<Platform> {
-            protected override Platform BuildEntity() => new Platform();
+            protected override Platform BuildEntity() => new Platform(CreateStaticPhysicalBody());
         }
 
-        public static AbstractEntityBuilder<PowerUp> GetPowerUpBuilder() => new PowerUpBuilder();
+        public static IEntityBuilder<PowerUp> GetPowerUpBuilder() => new PowerUpBuilder();
 
         private class PowerUpBuilder : AbstractEntityBuilder<PowerUp> {
             protected override PowerUp BuildEntity()
             {
                 if (GetPowerUpType().HasValue)
                 {
-                    return new PowerUp(GetPowerUpType().Value);
+                    return new PowerUp(CreateStaticPhysicalBody(), GetPowerUpType().Value);
                 }
                 throw new InvalidOperationException(NOT_REQ_FIELDS);
             }
         }
 
-        public static AbstractEntityBuilder<RollingEnemy> GetRollingEnemyBuilder() => new RollingEnemyBuilder();
+        public static IEntityBuilder<RollingEnemy> GetRollingEnemyBuilder() => new RollingEnemyBuilder();
 
         private class RollingEnemyBuilder : AbstractEntityBuilder<RollingEnemy> {
-            protected override RollingEnemy BuildEntity() => new RollingEnemy();
+            protected override RollingEnemy BuildEntity() => new RollingEnemy(CreateDynamicPhysicalBody());
         }
 
-        public static AbstractEntityBuilder<WalkingEnemy> GetWalkingEnemyBuilder() => new WalkingEnemyBuilder();
+        public static IEntityBuilder<WalkingEnemy> GetWalkingEnemyBuilder() => new WalkingEnemyBuilder();
 
         private class WalkingEnemyBuilder : AbstractEntityBuilder<WalkingEnemy> {
             protected override WalkingEnemy BuildEntity()
             {
                 if (GetWalkingRange().HasValue)
                 {
-                    return new WalkingEnemy(GetWalkingRange().Value);
+                    return new WalkingEnemy(CreateDynamicPhysicalBody(), GetWalkingRange().Value);
                 }
                 throw new InvalidOperationException(NOT_REQ_FIELDS);
             }

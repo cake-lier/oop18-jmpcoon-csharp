@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace jmpcoon.model.entities
+﻿namespace jmpcoon.model.entities
 {
     public class EntityProperties : IEntityProperties
     {
@@ -10,8 +7,8 @@ namespace jmpcoon.model.entities
         {
             Type = type;
             Shape = shape;
-            Position = Tuple.Create(xCoord, yCoord);
-            Dimensions = Tuple.Create(width, height);
+            Position = (X : xCoord, Y: yCoord);
+            Dimensions = (Width: width, Height: height);
             Angle = angle;
             PowerUpType = powerUpType;
             WalkingRange = walkingRange;
@@ -21,9 +18,9 @@ namespace jmpcoon.model.entities
 
         public BodyShape Shape { get; }
 
-        public Tuple<double, double> Position { get; }
+        public (double X, double Y) Position { get; }
 
-        public Tuple<double, double> Dimensions { get; }
+        public (double Width, double Height) Dimensions { get; }
 
         public double Angle { get; }
 
@@ -31,20 +28,20 @@ namespace jmpcoon.model.entities
 
         public double? WalkingRange { get; }
 
-        public override bool Equals(object obj) => Equals(obj as EntityProperties);
-
-        public bool Equals(EntityProperties other) 
-            => other != null && Type == other.Type && Shape == other.Shape && Math.Abs(Angle - other.Angle) < double.Epsilon
-               && EqualityComparer<Tuple<double, double>>.Default.Equals(Position, other.Position)
-               && EqualityComparer<Tuple<double, double>>.Default.Equals(Dimensions, other.Dimensions);
+        public override bool Equals(object obj) => obj is EntityProperties properties 
+                                                   && Type == properties.Type
+                                                   && Shape == properties.Shape
+                                                   && Position.Equals(properties.Position)
+                                                   && Dimensions.Equals(properties.Dimensions)
+                                                   && Angle.CompareTo(properties.Angle) == 0;
 
         public override int GetHashCode()
         {
-            int hashCode = 1648768757;
+            var hashCode = 1648768757;
             hashCode = hashCode * -1521134295 + Type.GetHashCode();
             hashCode = hashCode * -1521134295 + Shape.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<Tuple<double, double>>.Default.GetHashCode(Position);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Tuple<double, double>>.Default.GetHashCode(Dimensions);
+            hashCode = hashCode * -1521134295 + Position.GetHashCode();
+            hashCode = hashCode * -1521134295 + Dimensions.GetHashCode();
             hashCode = hashCode * -1521134295 + Angle.GetHashCode();
             return hashCode;
         }

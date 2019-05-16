@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace jmpcoon.model.entities
+﻿namespace jmpcoon.model.entities
 {
     public interface IUnmodifiableEntity
     {
-        Tuple<double, double> Position { get; }
+        (double X, double Y) Position { get; }
 
         BodyShape Shape { get; }
 
@@ -14,11 +12,11 @@ namespace jmpcoon.model.entities
 
         EntityState State { get; }
 
-        Tuple<double, double> Dimensions { get; }
+        (double Width, double Height) Dimensions { get; }
 
         bool Dynamic { get; }
 
-        Tuple<double, double> Velocity { get; }
+        (double X, double Y) Velocity { get; }
 
         PowerUpType? PowerUpType { get; }
     }

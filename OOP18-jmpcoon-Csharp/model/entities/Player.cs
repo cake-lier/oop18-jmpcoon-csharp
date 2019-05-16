@@ -1,9 +1,25 @@
-﻿namespace jmpcoon.model.entities
+﻿using System.Linq;
+
+namespace jmpcoon.model.entities
 {
-    public class Player : IDynamicEntity
+    public class Player : DynamicEntity
     {
-        public Player()
+        private readonly PlayerPhysicalBody body;
+
+        public Player(PlayerPhysicalBody body) : base(body)
         {
+            this.body = body;
+        }
+
+        public override EntityType Type => EntityType.PLAYER;
+
+        public int Lives => body.Lives;
+
+        public void Move(MovementType movement)
+        {
+            var moveValues = MovementValues.Values()
+                                           .First(mValue => mValue.MovementType == movement);
+            body.ApplyMovement(moveValues.MovementType, moveValues.Impulse.X, moveValues.Impulse.Y);
         }
     }
 }

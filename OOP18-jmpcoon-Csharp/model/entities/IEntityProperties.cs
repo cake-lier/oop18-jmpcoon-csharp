@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace jmpcoon.model.entities
+﻿namespace jmpcoon.model.entities
 {
     public interface IEntityProperties
     {
@@ -8,9 +6,9 @@ namespace jmpcoon.model.entities
 
         BodyShape Shape { get; }
 
-        Tuple<double, double> Position { get; }
+        (double X, double Y) Position { get; }
 
-        Tuple<double, double> Dimensions { get; }
+        (double Width, double Height) Dimensions { get; }
 
         double Angle { get; }
 

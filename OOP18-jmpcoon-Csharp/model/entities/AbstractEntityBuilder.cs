@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
+using jmpcoon.model.physics;
 using jmpcoon.model.world;
 
 namespace jmpcoon.model.entities
 {
-    public abstract class AbstractEntityBuilder<E> where E : IEntity
+    public abstract class AbstractEntityBuilder<TEntity> : IEntityBuilder<TEntity> where TEntity : IEntity
     { 
         private const string INCOMPLETE_BUILDER_MSG = "Not all the fields have been initialized";
         private const string ALREADY_BUILT_MSG = "This builder has already been used";
 
-        private Tuple<double, double> center;
-        private Tuple<double, double> dimensions;
+        private (double X, double Y)? center;
+        private (double Width, double Height)? dimensions;
         private BodyShape? shape;
         private double? angle;
         private PowerUpType? powerUpType;
@@ -30,62 +31,71 @@ namespace jmpcoon.model.entities
             built = false;
         }
 
-        public AbstractEntityBuilder<E> SetPosition(Tuple<double, double> center)
+        public IEntityBuilder<TEntity> SetPosition((double X, double Y) center)
         {
-            this.center = Tuple.Create(center.Item1, center.Item2);
+            this.center = (center.X, center.Y);
             return this;
         }
 
-        public AbstractEntityBuilder<E> SetDimensions(Tuple<double, double> dimensions)
+        public IEntityBuilder<TEntity> SetDimensions((double Width, double Height) dimensions)
         {
-            this.dimensions = Tuple.Create(dimensions.Item1, dimensions.Item2);
+            this.dimensions = (dimensions.Width, dimensions.Height);
             return this;
         }
 
-        public AbstractEntityBuilder<E> SetShape(BodyShape shape)
+        public IEntityBuilder<TEntity> SetShape(BodyShape shape)
         {
             this.shape = shape;
             return this;
         }
 
-        public AbstractEntityBuilder<E> SetAngle(double angle)
+        public IEntityBuilder<TEntity> SetAngle(double angle)
         {
             this.angle = angle;
             return this;
         }
 
-        public AbstractEntityBuilder<E> SetPowerUpType(PowerUpType? powerUpType)
+        public IEntityBuilder<TEntity> SetPowerUpType(PowerUpType? powerUpType)
         {
             this.powerUpType = powerUpType;
             return this;
         }
 
-        public AbstractEntityBuilder<E> SetWalkingRange(double? walkingRange)
+        public IEntityBuilder<TEntity> SetWalkingRange(double? walkingRange)
         {
             this.walkingRange = walkingRange;
             return this;
         }
 
-        public AbstractEntityBuilder<E> SetWorld(IModifiableWorld world)
+        public IEntityBuilder<TEntity> SetWorld(IModifiableWorld world)
         {
             this.world = world;
             return this;
         }
 
-        public E Build()
+        public TEntity Build()
         {
             CheckIfBuildable();
             built = true;
             return BuildEntity();
         }
 
-        protected abstract E BuildEntity();
+        protected abstract TEntity BuildEntity();
 
         protected PowerUpType? GetPowerUpType() => powerUpType;
 
         protected double? GetWalkingRange() => walkingRange;
 
         protected IModifiableWorld GetWorld() => world;
+
+        protected StaticPhysicalBody CreateStaticPhysicalBody()
+            => new StaticPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width, dimensions.Value.Height);
+
+        protected DynamicPhysicalBody CreateDynamicPhysicalBody()
+            => new DynamicPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width, dimensions.Value.Height);
+
+        protected PlayerPhysicalBody CreatePlayerPhysicalBody()
+            => new PlayerPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width, dimensions.Value.Height);
 
         private void CheckIfBuildable()
         {

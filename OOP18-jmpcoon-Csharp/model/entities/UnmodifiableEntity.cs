@@ -9,14 +9,14 @@ namespace jmpcoon.model.entities
 
         private readonly IEntity innerEntity;
 
-        public UnmodifiableEntity(IDynamicEntity entity)
+        public UnmodifiableEntity(DynamicEntity entity)
         {
             innerEntity = entity.RequireNonNull();
             Dynamic = true;
             PowerUpType = null;
         }
 
-        public UnmodifiableEntity(IStaticEntity entity)
+        public UnmodifiableEntity(StaticEntity entity)
         {
             if (entity.RequireNonNull().Type == EntityType.POWERUP) {
                 throw new ArgumentException(WRONG_CONSTRUCTOR);
@@ -33,7 +33,7 @@ namespace jmpcoon.model.entities
             PowerUpType = powerUp.PowerUpType;
         }
 
-        public Tuple<double, double> Position => innerEntity.Position;
+        public (double X, double Y) Position => innerEntity.Position;
 
         public BodyShape Shape => innerEntity.Shape;
 
@@ -43,18 +43,16 @@ namespace jmpcoon.model.entities
 
         public EntityState State => innerEntity.State;
 
-        public Tuple<double, double> Dimensions => innerEntity.Dimensions;
+        public (double Width, double Height) Dimensions => innerEntity.Dimensions;
 
         public bool Dynamic { get; }
 
-        public Tuple<double, double> Velocity => innerEntity.Velocity;
+        public (double X, double Y) Velocity => innerEntity.Velocity;
 
         public PowerUpType? PowerUpType { get; }
 
-        public override bool Equals(object obj) => Equals(obj as UnmodifiableEntity);
-
-        public bool Equals(UnmodifiableEntity other) 
-            => other != null && EqualityComparer<IEntity>.Default.Equals(innerEntity, other.innerEntity);
+        public override bool Equals(object obj) => obj is UnmodifiableEntity entity 
+                                                   && EqualityComparer<IEntity>.Default.Equals(innerEntity, entity.innerEntity);
 
         public override int GetHashCode() => 548418112 + EqualityComparer<IEntity>.Default.GetHashCode(innerEntity);
     }
