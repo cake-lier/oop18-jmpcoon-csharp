@@ -10,73 +10,74 @@ namespace jmpcoon.model.entities
         private const string INCOMPLETE_BUILDER_MSG = "Not all the fields have been initialized";
         private const string ALREADY_BUILT_MSG = "This builder has already been used";
 
-        private (double X, double Y)? center;
-        private (double Width, double Height)? dimensions;
-        private BodyShape? shape;
-        private double? angle;
-        private PowerUpType? powerUpType;
-        private double? walkingRange;
-        private IModifiableWorld world;
-        private IPhysicalFactory factory;
+        private (double X, double Y)? Center { get; set; }
+        private (double Width, double Height)? Dimensions { get; set; }
+        private BodyShape? Shape { get; set; }
+        private double? Angle { get; set; }
+        protected PowerUpType? PowerUpType { get; private set; }
+        protected double? WalkingRange { get; private set; }
+        protected IModifiableWorld World { get; private set; }
+        protected IPhysicalFactory Factory { get; private set; }
         private bool built;
 
         protected AbstractEntityBuilder()
         {
-            center = null;
-            dimensions = null;
-            shape = null;
-            angle = null;
-            powerUpType = null;
-            walkingRange = null;
-            world = null;
+            Center = null;
+            Dimensions = null;
+            Shape = null;
+            Angle = null;
+            PowerUpType = null;
+            WalkingRange = null;
+            World = null;
+            Factory = null;
             built = false;
         }
 
         public IEntityBuilder<TEntity> SetPosition((double X, double Y) center)
         {
-            this.center = (center.X, center.Y);
+            Center = (center.X, center.Y);
             return this;
         }
 
         public IEntityBuilder<TEntity> SetDimensions((double Width, double Height) dimensions)
         {
-            this.dimensions = (dimensions.Width, dimensions.Height);
+            Dimensions = (dimensions.Width, dimensions.Height);
             return this;
         }
 
         public IEntityBuilder<TEntity> SetShape(BodyShape shape)
         {
-            this.shape = shape;
+            Shape = shape;
             return this;
         }
 
         public IEntityBuilder<TEntity> SetAngle(double angle)
         {
-            this.angle = angle;
+            Angle = angle;
             return this;
         }
 
         public IEntityBuilder<TEntity> SetFactory(IPhysicalFactory factory)
         {
-            this.factory = factory;
+            Factory = factory;
             return this;
         }
 
         public IEntityBuilder<TEntity> SetPowerUpType(PowerUpType? powerUpType)
         {
-            this.powerUpType = powerUpType;
+            PowerUpType = powerUpType;
             return this;
         }
 
         public IEntityBuilder<TEntity> SetWalkingRange(double? walkingRange)
         {
-            this.walkingRange = walkingRange;
+            WalkingRange = walkingRange;
             return this;
         }
 
         public IEntityBuilder<TEntity> SetWorld(IModifiableWorld world)
         {
-            this.world = world;
+            World = world;
             return this;
         }
 
@@ -89,29 +90,21 @@ namespace jmpcoon.model.entities
 
         protected abstract TEntity BuildEntity();
 
-        protected PowerUpType? GetPowerUpType() => powerUpType;
-
-        protected double? GetWalkingRange() => walkingRange;
-
-        protected IModifiableWorld GetWorld() => world;
-
-        protected IPhysicalFactory GetPhysicalFactory() => factory;
-
         protected StaticPhysicalBody CreateStaticPhysicalBody(EntityType type)
-            => factory.CreateStaticPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width, dimensions.Value.Height,
-                                                type, powerUpType);
+            => Factory.CreateStaticPhysicalBody(Center.Value, Angle.Value, Shape.Value, Dimensions.Value.Width, Dimensions.Value.Height,
+                                                type, PowerUpType);
 
         protected DynamicPhysicalBody CreateDynamicPhysicalBody(EntityType type)
-            => factory.CreateDynamicPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width,
-                                                 dimensions.Value.Height, type);
+            => Factory.CreateDynamicPhysicalBody(Center.Value, Angle.Value, Shape.Value, Dimensions.Value.Width,
+                                                 Dimensions.Value.Height, type);
 
         protected PlayerPhysicalBody CreatePlayerPhysicalBody()
-            => factory.CreatePlayerPhysicalBody(center.Value, angle.Value, shape.Value, dimensions.Value.Width,
-                                                dimensions.Value.Height);
+            => Factory.CreatePlayerPhysicalBody(Center.Value, Angle.Value, Shape.Value, Dimensions.Value.Width,
+                                                Dimensions.Value.Height);
 
         private void CheckIfBuildable()
         {
-            CheckFieldsPresence(center, dimensions, shape, angle);
+            CheckFieldsPresence(Center, Dimensions, Shape, Angle);
             if (built)
             {
                 throw new InvalidOperationException(ALREADY_BUILT_MSG);
