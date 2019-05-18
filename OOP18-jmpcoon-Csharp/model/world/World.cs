@@ -40,31 +40,32 @@ namespace jmpcoon.model.world
             initialized = false;
         }
 
-        public Queue<CollisionEvent> GetCurrentEvents() => currentEvents;
+        public Queue<CollisionEvent> GetCurrentEvents() => new Queue<CollisionEvent>(currentEvents);
 
-        public ICollection<UnmodifiableEntity> GetAliveEntities()
+        public ICollection<IUnmodifiableEntity> GetAliveEntities()
             => GetEntitiesStream<StaticEntity>(aliveEntities, e => new UnmodifiableEntity(e),
                                                 new List<Type> { typeof(Platform), typeof(Ladder) })
                .Concat(GetDynamicEntitiesStream(aliveEntities))
                .Concat(GetPowerUpStream(aliveEntities))
-               .ToList();
+               .ToHashSet();
 
-        public ICollection<UnmodifiableEntity> GetDeadEntities() => GetPowerUpStream(deadEntities)
+        public ICollection<IUnmodifiableEntity> GetDeadEntities() => GetPowerUpStream(deadEntities)
                                                                     .Concat(GetDynamicEntitiesStream(deadEntities))
-                                                                    .ToList();
+                                                                    .ToHashSet();
 
         public bool HasPlayerWon() => currentState == GameState.PLAYER_WON;
 
         public bool IsGameOver() => currentState == GameState.GAME_OVER;
 
-        public void InitLevel(ICollection<EntityProperties> entities)
+        public void InitLevel(ICollection<IEntityProperties> entities)
         {
             entities.AsParallel()
                     .ForAll(entity =>
                         {
-                            EntityCreator creator = EntityCreator.Values().First(c => c.EntityType.Equals(entity.Type));
+                            EntityCreator creator = EntityCreator.Values().First(c => c.EntityType == entity.Type);
                             Type entityClass = creator.ClassType;
                             aliveEntities.PutInstance(entityClass, creator.GetEntityBuilder()
+                                                                          .SetFactory(physicsFactory)
                                                                           .SetDimensions(entity.Dimensions)
                                                                           .SetPosition(entity.Position)
                                                                           .SetAngle(entity.Angle)
@@ -108,7 +109,11 @@ namespace jmpcoon.model.world
             return false;
         }
 
-        public int GetPlayerLives() => player?.Lives ?? 0;
+        public int GetPlayerLives()
+        {
+            CheckInitialization();
+            return player?.Lives ?? 0;
+        }
 
         public void Update()
         {
@@ -132,8 +137,8 @@ namespace jmpcoon.model.world
             aliveEntities.GetInstances<EnemyGenerator>(typeof(EnemyGenerator)).AsParallel().ForAll(e => e.OnTimeAdvanced());
         }
 
-        public void AddGeneratedRollingEnemy(RollingEnemy rollingEnemy)
-            => aliveEntities.PutInstance(typeof(RollingEnemy), rollingEnemy);
+        public void AddGeneratedRollingEnemy(RollingEnemy generatedEnemy)
+            => aliveEntities.PutInstance(typeof(RollingEnemy), generatedEnemy);
 
         public void NotifyCollision(CollisionEvent collisionType)
         {
@@ -163,23 +168,23 @@ namespace jmpcoon.model.world
             }
         }
 
-        private IEnumerable<UnmodifiableEntity> GetDynamicEntitiesStream(IClassToInstanceMultimap<IEntity> multimap)
+        private IEnumerable<IUnmodifiableEntity> GetDynamicEntitiesStream(IClassToInstanceMultimap<IEntity> multimap)
             => GetEntitiesStream<DynamicEntity>(multimap,
                                                  e => new UnmodifiableEntity(e),
                                                  new List<Type> { typeof(Player), typeof(RollingEnemy), typeof(WalkingEnemy) });
 
-        private IEnumerable<UnmodifiableEntity> GetEntitiesStream<E>(IClassToInstanceMultimap<IEntity> multimap,
-                                                                     Func<E, UnmodifiableEntity> mapper,
-                                                                     ICollection<Type> keys) where E : IEntity
+        private IEnumerable<IUnmodifiableEntity> GetEntitiesStream<TEntity>(IClassToInstanceMultimap<IEntity> multimap,
+                                                                            Func<TEntity, IUnmodifiableEntity> mapper,
+                                                                            ICollection<Type> keys) where TEntity : IEntity
             => keys.SelectMany(type => GetEntityKeyStream(multimap, mapper, type));
 
-        private IEnumerable<UnmodifiableEntity> GetPowerUpStream(IClassToInstanceMultimap<IEntity> multimap) 
+        private IEnumerable<IUnmodifiableEntity> GetPowerUpStream(IClassToInstanceMultimap<IEntity> multimap) 
             => GetEntityKeyStream<PowerUp>(multimap, e => new UnmodifiableEntity(e), typeof(PowerUp));
 
-        private IEnumerable<UnmodifiableEntity> GetEntityKeyStream<E>(IClassToInstanceMultimap<IEntity> multimap,
-                                                                      Func<E, UnmodifiableEntity> mapper,
-                                                                      Type key) where E : IEntity 
-            => multimap.GetInstances<E>(key).Select(mapper);
+        private IEnumerable<IUnmodifiableEntity> GetEntityKeyStream<TEntity>(IClassToInstanceMultimap<IEntity> multimap,
+                                                                             Func<TEntity, IUnmodifiableEntity> mapper,
+                                                                             Type key) where TEntity : IEntity 
+            => multimap.GetInstances<TEntity>(key).Select(mapper);
 
         private bool IsBodyStanding(IPhysicalBody body)
         {
@@ -189,7 +194,7 @@ namespace jmpcoon.model.world
             return innerWorld.GetCollidingBodies(body)
                              .Where(collision => platformsBodies.Contains(collision.Body))
                              .Any(platformStand => PhysicsUtils.IsBodyOnTop(body, platformStand.Body,
-                                                                                  platformStand.CollisionPoint))
+                                                                            platformStand.CollisionPoint))
                    && body.State != EntityState.JUMPING;
         }
 

@@ -18,7 +18,6 @@
             {
                 return false;
             }
-
             var type = (MovementType)obj;
             return CorrespondingState == type.CorrespondingState;
         }

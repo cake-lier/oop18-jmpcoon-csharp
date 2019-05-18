@@ -3,9 +3,9 @@ namespace jmpcoon
 {
     public static class Objects
     {
-        public static TObject RequireNonNull<TObject>(this TObject obj) where TObject : class
+        public static TObject RequireNonNull<TObject>(this TObject obj)
         {
-            if (obj == null)
+            if (obj.Equals(null))
             {
                 throw new ArgumentNullException();
             }

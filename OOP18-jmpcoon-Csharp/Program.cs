@@ -2,11 +2,11 @@
 
 namespace jmpcoon
 {
-    class MainClass
+    public class MainClass
     {
         public static void Main(string[] args)
         {
-            ClassToInstanceMultimap<int> numbers = new ClassToInstanceMultimap<int>();
+
         }
     }
 }

@@ -5,65 +5,56 @@ using Microsoft.Collections.Extensions;
 
 namespace jmpcoon.model
 {
-    public class ClassToInstanceMultimap<B> : ForwardingMultimap<Type, B>, IClassToInstanceMultimap<B>
+    public class ClassToInstanceMultimap<TUpper> : ForwardingMultimap<Type, TUpper>, IClassToInstanceMultimap<TUpper>
     {
+        private const string NO_NULL = "A null key is not accepted!";
         private const string CAST_ERROR = "Wrong type has been inserted";
 
-        private readonly MultiValueDictionary<Type, B> backingMap;
+        private readonly MultiValueDictionary<Type, TUpper> backingMap;
 
-        public ClassToInstanceMultimap() => backingMap = new MultiValueDictionary<Type, B>();
+        public ClassToInstanceMultimap() => backingMap = new MultiValueDictionary<Type, TUpper>();
 
-        public ClassToInstanceMultimap(MultiValueDictionary<Type, B> multimap)
+        public ClassToInstanceMultimap(MultiValueDictionary<Type, TUpper> backingMap)
         {
-            multimap.AsParallel().ForAll(pair => CheckCollection(pair.Key, pair.Value));
-            backingMap = multimap;
+            CheckMultimapEntries(backingMap.RequireNonNull());
+            this.backingMap = backingMap;
         }
 
-        public override void Add(Type key, B value)
+        public override void Add(Type key, TUpper value)
         {
-            CheckType(key);
-            CheckCouple(key, value);
+            Cast(key.RequireNonNull(), value.RequireNonNull());
             base.Add(key, value);
         }
 
-        public override void AddRange(Type key, IEnumerable<B> values)
+        public override void AddRange(Type key, IEnumerable<TUpper> values)
         {
-            CheckCollection(key, values);
+            CheckIterableValues(key, values);
             base.AddRange(key, values);
         }
 
-        public ICollection<T> GetInstances<T>(Type type) where T : B
-        {
-            CheckType(type);
-            return backingMap[type].Cast<T>().ToList();
-        }
+        public ICollection<TElem> GetInstances<TElem>(Type type) where TElem : TUpper
+            => this[type.RequireNonNull()].Cast<TElem>().ToList();
 
-        public void PutInstance<T>(Type type, T value) where T : B
-        {
-            CheckType(type);
-            CheckCouple(type, value);
-            backingMap.Add(type, value);
-        }
+        public void PutInstance<TElem>(Type type, TElem value) where TElem : TUpper => Add(type, value);
 
-        protected override MultiValueDictionary<Type, B> Delegate() => backingMap;
+        protected override MultiValueDictionary<Type, TUpper> Delegate() => backingMap;
 
-        private void CheckCastValidity(bool condition)
+        private void CheckMultimapEntries(MultiValueDictionary<Type, TUpper> multimap)
+            => multimap.SelectMany(list => list.Value.Select(value => new KeyValuePair<Type, TUpper>(list.Key, value)))
+                       .AsParallel()
+                       .ForAll(entry => Cast(entry.Key.RequireNonNull(), entry.Value.RequireNonNull()));
+
+        private void CheckIterableValues(Type type, IEnumerable<TUpper> values)
+            => values.RequireNonNull()
+                     .AsParallel()
+                     .ForAll(value => Cast(type.RequireNonNull(), value.RequireNonNull()));
+
+        private void Cast(Type type, TUpper value) 
         {
-            if (!condition)
+            if (!typeof(TUpper).IsAssignableFrom(type) || !type.IsAssignableFrom(value.GetType()))
             {
                 throw new InvalidCastException(CAST_ERROR);
             }
         }
-
-        private void CheckType(Type key) => CheckCastValidity(typeof(B).IsAssignableFrom(key));
-
-        private void CheckCouple<T>(Type key, T value) where T : B => CheckCastValidity(key.IsAssignableFrom(value.GetType()));
-
-        private void CheckCollection<T>(Type key, IEnumerable<T> value) where T : B => value.AsParallel()
-                                                                                            .ForAll(el =>
-                                                                                                        {
-                                                                                                            CheckType(key);
-                                                                                                            CheckCouple(key, el);
-                                                                                                        });
     }
 }

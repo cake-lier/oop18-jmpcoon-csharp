@@ -28,9 +28,6 @@ namespace jmpcoon.model.world
 
         private readonly EntityBuilderSupplier<IEntity> supplier;
 
-        public Type ClassType { get; }
-        public EntityType EntityType { get; }
-
         private EntityCreator(EntityType associatedType, Type associatedClass, EntityBuilderSupplier<IEntity> supplier)
         {
             EntityType = associatedType;
@@ -38,9 +35,39 @@ namespace jmpcoon.model.world
             ClassType = associatedClass;
         }
 
+        public Type ClassType { get; }
+        public EntityType EntityType { get; }
+
+        public IEntityBuilder<IEntity> GetEntityBuilder() => supplier.Invoke();
+
         public static IList<EntityCreator> Values()
             => new List<EntityCreator> { LADDER, PLAYER, PLATFORM, POWERUP, ROLLING_ENEMY, WALKING_ENEMY, ENEMY_GENERATOR };
 
-        public IEntityBuilder<IEntity> GetEntityBuilder() => supplier.Invoke();
+        public override bool Equals(object obj)
+        {
+            if (!(obj is EntityCreator))
+            {
+                return false;
+            }
+            var creator = (EntityCreator)obj;
+            return EqualityComparer<EntityBuilderSupplier<IEntity>>.Default.Equals(supplier, creator.supplier)
+                   && EqualityComparer<Type>.Default.Equals(ClassType, creator.ClassType)
+                   && EntityType == creator.EntityType;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1314457902;
+            hashCode = hashCode * -1521134295 + EqualityComparer<EntityBuilderSupplier<IEntity>>.Default.GetHashCode(supplier);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Type>.Default.GetHashCode(ClassType);
+            hashCode = hashCode * -1521134295 + EntityType.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(EntityCreator firstCreator, EntityCreator secondCreator)
+            => firstCreator.Equals(secondCreator);
+
+        public static bool operator !=(EntityCreator firstCreator, EntityCreator secondCreator)
+            => !(firstCreator == secondCreator);
     }
 }

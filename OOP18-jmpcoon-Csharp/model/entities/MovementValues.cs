@@ -22,14 +22,13 @@ namespace jmpcoon.model.entities
 
         public static IList<MovementValues> Values() => new List<MovementValues> { CLIMB_DOWN, CLIMB_UP, JUMP, MOVE_RIGHT,
                                                                                    MOVE_LEFT };
-
+       
         public override bool Equals(object obj)
         {
             if (!(obj is MovementValues))
             {
                 return false;
             }
-
             var values = (MovementValues)obj;
             return EqualityComparer<MovementType>.Default.Equals(MovementType, values.MovementType)
                    && Impulse.Equals(values.Impulse);

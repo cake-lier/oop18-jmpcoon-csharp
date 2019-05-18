@@ -9,7 +9,7 @@ namespace jmpcoon.model.world
 
         int Score { get; }
 
-        void InitLevel(ICollection<EntityProperties> entities);
+        void InitLevel(ICollection<IEntityProperties> entities);
 
         void Update();
 
@@ -19,9 +19,9 @@ namespace jmpcoon.model.world
 
         bool HasPlayerWon();
 
-        ICollection<UnmodifiableEntity> GetAliveEntities();
+        ICollection<IUnmodifiableEntity> GetAliveEntities();
 
-        ICollection<UnmodifiableEntity> GetDeadEntities();
+        ICollection<IUnmodifiableEntity> GetDeadEntities();
 
         Queue<CollisionEvent> GetCurrentEvents();
 

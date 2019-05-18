@@ -10,14 +10,6 @@ namespace jmpcoon.model.entities
         private const string INCOMPLETE_BUILDER_MSG = "Not all the fields have been initialized";
         private const string ALREADY_BUILT_MSG = "This builder has already been used";
 
-        private (double X, double Y)? Center { get; set; }
-        private (double Width, double Height)? Dimensions { get; set; }
-        private BodyShape? Shape { get; set; }
-        private double? Angle { get; set; }
-        protected PowerUpType? PowerUpType { get; private set; }
-        protected double? WalkingRange { get; private set; }
-        protected IModifiableWorld World { get; private set; }
-        protected IPhysicalFactory Factory { get; private set; }
         private bool built;
 
         protected AbstractEntityBuilder()
@@ -32,6 +24,22 @@ namespace jmpcoon.model.entities
             Factory = null;
             built = false;
         }
+
+        private (double X, double Y)? Center { get; set; }
+
+        private (double Width, double Height)? Dimensions { get; set; }
+
+        private BodyShape? Shape { get; set; }
+
+        private double? Angle { get; set; }
+
+        protected PowerUpType? PowerUpType { get; private set; }
+
+        protected double? WalkingRange { get; private set; }
+
+        protected IModifiableWorld World { get; private set; }
+
+        protected IPhysicalFactory Factory { get; private set; }
 
         public IEntityBuilder<TEntity> SetPosition((double X, double Y) center)
         {
@@ -104,7 +112,7 @@ namespace jmpcoon.model.entities
 
         private void CheckIfBuildable()
         {
-            CheckFieldsPresence(Center, Dimensions, Shape, Angle);
+            CheckFieldsPresence(Factory, Center, Dimensions, Shape, Angle);
             if (built)
             {
                 throw new InvalidOperationException(ALREADY_BUILT_MSG);

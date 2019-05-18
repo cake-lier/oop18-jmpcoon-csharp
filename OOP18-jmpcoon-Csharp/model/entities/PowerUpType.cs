@@ -18,7 +18,6 @@ namespace jmpcoon.model.entities
             {
                 return false;
             }
-
             var type = (PowerUpType)obj;
             return AssociatedEvent == type.AssociatedEvent;
         }
