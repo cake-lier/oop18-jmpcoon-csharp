@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using jmpcoon.model.physics;
+using jmpcoon.utils;
 
 namespace jmpcoon.model.entities
 {
+    [Serializable]
     public abstract class AbstractEntity : IEntity
     {
         protected AbstractEntity(IPhysicalBody body) => PhysicalBody = body.RequireNonNull();

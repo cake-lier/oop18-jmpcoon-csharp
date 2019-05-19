@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using jmpcoon.model.entities;
 using jmpcoon.model.physics;
 
 namespace jmpcoon.model.world
 {
+    [Serializable]
     public class World : IWorld
     {
         private const double WORLD_WIDTH = 8;
@@ -40,18 +42,17 @@ namespace jmpcoon.model.world
             initialized = false;
         }
 
-        public Queue<CollisionEvent> GetCurrentEvents() => new Queue<CollisionEvent>(currentEvents);
+        public ImmutableQueue<CollisionEvent> GetCurrentEvents() => ImmutableQueue.CreateRange(currentEvents);
 
-        public ICollection<IUnmodifiableEntity> GetAliveEntities()
+        public IReadOnlyCollection<IUnmodifiableEntity> GetAliveEntities()
             => GetEntitiesStream<StaticEntity>(aliveEntities, e => new UnmodifiableEntity(e),
-                                                new List<Type> { typeof(Platform), typeof(Ladder) })
+                                               new List<Type> { typeof(Platform), typeof(Ladder) })
                .Concat(GetDynamicEntitiesStream(aliveEntities))
                .Concat(GetPowerUpStream(aliveEntities))
-               .ToHashSet();
+               .ToImmutableHashSet();
 
-        public ICollection<IUnmodifiableEntity> GetDeadEntities() => GetPowerUpStream(deadEntities)
-                                                                    .Concat(GetDynamicEntitiesStream(deadEntities))
-                                                                    .ToHashSet();
+        public IReadOnlyCollection<IUnmodifiableEntity> GetDeadEntities() 
+            => GetPowerUpStream(deadEntities).Concat(GetDynamicEntitiesStream(deadEntities)).ToImmutableHashSet();
 
         public bool HasPlayerWon() => currentState == GameState.PLAYER_WON;
 
@@ -59,8 +60,8 @@ namespace jmpcoon.model.world
 
         public void InitLevel(ICollection<IEntityProperties> entities)
         {
-            entities.AsParallel()
-                    .ForAll(entity =>
+            entities.ToList()
+                    .ForEach(entity =>
                         {
                             EntityCreator creator = EntityCreator.Values().First(c => c.EntityType == entity.Type);
                             Type entityClass = creator.ClassType;
@@ -121,7 +122,7 @@ namespace jmpcoon.model.world
             currentEvents.Clear();
             deadEntities.Clear();
             innerWorld.Update();
-            aliveEntities.AsParallel().ForAll(list => list.Value.AsParallel().ForAll(entity => {
+            aliveEntities.ToList().ForEach(list => list.Value.ToList().ForEach(entity => {
                 if (!entity.Alive)
                 {
                     deadEntities.PutInstance(list.Key, entity);
@@ -133,8 +134,8 @@ namespace jmpcoon.model.world
             {
                 currentState = GameState.GAME_OVER;
             }
-            aliveEntities.GetInstances<WalkingEnemy>(typeof(WalkingEnemy)).AsParallel().ForAll(e => e.ComputeMovement());
-            aliveEntities.GetInstances<EnemyGenerator>(typeof(EnemyGenerator)).AsParallel().ForAll(e => e.OnTimeAdvanced());
+            aliveEntities.GetInstances<WalkingEnemy>(typeof(WalkingEnemy)).ToList().ForEach(e => e.ComputeMovement());
+            aliveEntities.GetInstances<EnemyGenerator>(typeof(EnemyGenerator)).ToList().ForEach(e => e.OnTimeAdvanced());
         }
 
         public void AddGeneratedRollingEnemy(RollingEnemy generatedEnemy)

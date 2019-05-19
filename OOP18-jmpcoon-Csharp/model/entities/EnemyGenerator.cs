@@ -1,8 +1,10 @@
-﻿using jmpcoon.model.physics;
+﻿using System;
+using jmpcoon.model.physics;
 using jmpcoon.model.world;
 
 namespace jmpcoon.model.entities
 {
+    [Serializable]
     public class EnemyGenerator : StaticEntity
     {
         private static readonly (double Width, double Height) ROLLING_ENEMY_DIMENSIONS = (0.23, 0.23);

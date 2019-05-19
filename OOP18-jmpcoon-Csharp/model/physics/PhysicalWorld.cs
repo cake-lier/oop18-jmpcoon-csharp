@@ -9,11 +9,11 @@ namespace jmpcoon.model.physics
         public ICollection<(IPhysicalBody Body, (double X, double Y) CollisionPoint)> GetCollidingBodies(IPhysicalBody body) 
             => new List<(IPhysicalBody Body, (double CollisionX, double CollisionY))>();
 
-        void IUpdatablePhysicalWorld.RemoveBody(IPhysicalBody body)
+        public void RemoveBody(IPhysicalBody body)
         {
         }
 
-        void IUpdatablePhysicalWorld.Update()
+        public void Update()
         {
         }
     }

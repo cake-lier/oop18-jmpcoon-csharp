@@ -3,6 +3,7 @@ using jmpcoon.model.physics;
 
 namespace jmpcoon.model.entities
 {
+    [Serializable]
     public class WalkingEnemy : DynamicEntity
     {
         private const double WALKING_SPEED = 0.4;

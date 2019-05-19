@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using jmpcoon.model.physics;
 
 namespace jmpcoon.model.entities
 {
+    [Serializable]
     public class Player : DynamicEntity
     {
         private readonly PlayerPhysicalBody body;

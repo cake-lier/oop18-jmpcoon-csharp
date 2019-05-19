@@ -1,7 +1,9 @@
-﻿using jmpcoon.model.physics;
+﻿using System;
+using jmpcoon.model.physics;
 
 namespace jmpcoon.model.entities
 {
+    [Serializable]
     public class RollingEnemy : DynamicEntity
     {
         private const double ROLLING_ENEMY_SPEED = 3;

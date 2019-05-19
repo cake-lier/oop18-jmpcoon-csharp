@@ -1,5 +1,5 @@
 ﻿using System;
-namespace jmpcoon
+namespace jmpcoon.utils
 {
     public static class Objects
     {

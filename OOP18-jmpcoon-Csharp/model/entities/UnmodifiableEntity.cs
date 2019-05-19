@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using jmpcoon.model.physics;
+using jmpcoon.utils;
 
 namespace jmpcoon.model.entities
 {
@@ -51,6 +52,8 @@ namespace jmpcoon.model.entities
         public (double X, double Y) Velocity => innerEntity.Velocity;
 
         public PowerUpType? PowerUpType { get; }
+
+        public override string ToString() => innerEntity.ToString();
 
         public override bool Equals(object obj) => obj is UnmodifiableEntity entity 
                                                    && EqualityComparer<IEntity>.Default.Equals(innerEntity, entity.innerEntity);

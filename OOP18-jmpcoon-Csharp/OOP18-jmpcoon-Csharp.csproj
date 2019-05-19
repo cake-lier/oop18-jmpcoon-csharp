@@ -34,12 +34,14 @@
     <Reference Include="Microsoft.Experimental.Collections">
       <HintPath>packages\Microsoft.Experimental.Collections.1.0.6-e190117-3\lib\netstandard2.0\Microsoft.Experimental.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="model\ClassToInstanceMultimap.cs" />
     <Compile Include="model\IClassToInstanceMultimap.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="model\ForwardingMultimap.cs" />
     <Compile Include="model\world\World.cs" />
     <Compile Include="model\world\IUpdatableWorld.cs" />
@@ -68,7 +70,6 @@
     <Compile Include="model\entities\StaticEntity.cs" />
     <Compile Include="model\entities\EntityState.cs" />
     <Compile Include="model\entities\AbstractEntity.cs" />
-    <Compile Include="Objects.cs" />
     <Compile Include="model\entities\IUnmodifiableEntity.cs" />
     <Compile Include="model\physics\IPhysicalBody.cs" />
     <Compile Include="model\physics\AbstractPhysicalBody.cs" />
@@ -87,15 +88,20 @@
     <Compile Include="model\physics\IUpdatablePhysicalWorld.cs" />
     <Compile Include="model\physics\IPhysicalWorld.cs" />
     <Compile Include="model\physics\PhysicsUtils.cs" />
+    <Compile Include="main\Program.cs" />
+    <Compile Include="utils\Objects.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="res\level.lev" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="model\" />
     <Folder Include="model\world\" />
     <Folder Include="model\entities\" />
     <Folder Include="model\physics\" />
+    <Folder Include="main\" />
+    <Folder Include="utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

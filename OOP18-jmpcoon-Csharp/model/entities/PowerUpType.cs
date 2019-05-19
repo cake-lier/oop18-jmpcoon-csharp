@@ -1,7 +1,9 @@
-﻿using jmpcoon.model.world;
+﻿using System;
+using jmpcoon.model.world;
 
 namespace jmpcoon.model.entities
 {
+    [Serializable]
     public struct PowerUpType
     {
         public static readonly PowerUpType GOAL = new PowerUpType(CollisionEvent.GOAL_HIT);

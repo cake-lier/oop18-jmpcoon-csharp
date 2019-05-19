@@ -1,7 +1,9 @@
-﻿using jmpcoon.model.physics;
+﻿using System;
+using jmpcoon.model.physics;
 
 namespace jmpcoon.model.entities
 {
+    [Serializable]
     public class PowerUp : StaticEntity
     {
         public PowerUp(StaticPhysicalBody body, PowerUpType type) : base(body)

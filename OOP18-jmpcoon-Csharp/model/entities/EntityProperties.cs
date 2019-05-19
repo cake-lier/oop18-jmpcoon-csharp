@@ -1,7 +1,9 @@
-﻿using jmpcoon.model.physics;
+﻿using System;
+using jmpcoon.model.physics;
 
 namespace jmpcoon.model.entities
 {
+    [Serializable]
     public class EntityProperties : IEntityProperties
     {
         public EntityProperties(EntityType type, BodyShape shape, double xCoord, double yCoord, double width, double height,
@@ -48,7 +50,7 @@ namespace jmpcoon.model.entities
             return hashCode;
         }
 
-        public override string ToString() => "EntityPropertiesImpl [type=" + Type + ", shape=" + Shape + ", position=" + Position
+        public override string ToString() => "EntityProperties [type=" + Type + ", shape=" + Shape + ", position=" + Position
                                              + ", dimensions=" + Dimensions + ", Angle=" + Angle + "]";
     }
 }

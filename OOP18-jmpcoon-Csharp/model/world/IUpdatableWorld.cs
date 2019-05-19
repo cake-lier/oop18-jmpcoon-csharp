@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using jmpcoon.model.entities;
 
 namespace jmpcoon.model.world
@@ -19,11 +20,11 @@ namespace jmpcoon.model.world
 
         bool HasPlayerWon();
 
-        ICollection<IUnmodifiableEntity> GetAliveEntities();
+        IReadOnlyCollection<IUnmodifiableEntity> GetAliveEntities();
 
-        ICollection<IUnmodifiableEntity> GetDeadEntities();
+        IReadOnlyCollection<IUnmodifiableEntity> GetDeadEntities();
 
-        Queue<CollisionEvent> GetCurrentEvents();
+        ImmutableQueue<CollisionEvent> GetCurrentEvents();
 
         int GetPlayerLives();
     }

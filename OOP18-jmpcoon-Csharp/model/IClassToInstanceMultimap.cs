@@ -7,6 +7,6 @@ namespace jmpcoon.model
     {
         void PutInstance<T>(Type type, T value) where T : B;
 
-        ICollection<T> GetInstances<T>(Type type) where T : B;
+        IReadOnlyCollection<T> GetInstances<T>(Type type) where T : B;
     }
 }
