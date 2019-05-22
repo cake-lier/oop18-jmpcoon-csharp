@@ -36,6 +36,9 @@ namespace jmpcoon.test
         private const string NOT_SAME_KEYS_IN_ENTRIES = "The keys in the entries aren't the same as before";
         private const string NOT_SAME_VALUES_IN_ENTRIES = "The values in the entries aren't the same as before";
         private const string NO_NEW_ELEMENTS = "The multimap shouldn't already contain a newly generated instance";
+        private const string INDEXER_FAILED = "The indexer didn't obtain the two instances of Platform present";
+        private const string TRYGETVALUE_FAILED = "The 'TryGetValue' method didn't correctly get the supposedly present values";
+        private const string TRYGETVALUE_SUCCEEDED = "The 'TryGetValue' method succeeded instead of failing as it was supposed";
         private readonly (double X, double Y) FST_STD_POSITION = (X: WORLD_WIDTH / 2, Y: WORLD_HEIGHT / 2);
         private readonly (double X, double Y) SND_STD_POSITION = (X: WORLD_WIDTH / 2 + 1, Y: WORLD_HEIGHT / 2 + 1);
         private readonly (double Width, double Height) FST_STD_RECTANGULAR_DIMENSIONS = (Width: WORLD_WIDTH / 10,
@@ -119,10 +122,17 @@ namespace jmpcoon.test
             var expectedValues = new List<IEntity> { player, firstPlatform, secondPlatform };
             Assert.IsTrue(values.All(e => expectedValues.Contains(e)), ADD_OR_VALUES_FAILED);
             Assert.AreEqual(3, values.Count, NOT_SAME_NUMBER_VALUES);
-            var platforms = multimap[typeof(Platform)].ToList();
             var expectedPlatforms = new List<IEntity> { firstPlatform, secondPlatform };
-            Assert.IsTrue(platforms.All(e => expectedPlatforms.Contains(e)));
+            var platforms = multimap[typeof(Platform)].ToList();
+            Assert.IsTrue(platforms.All(e => expectedPlatforms.Contains(e)), INDEXER_FAILED);
             Assert.AreEqual(2, platforms.Count, NOT_SAME_NUMBER_ELEMENTS);
+            IReadOnlyCollection<IEntity> actualPlatforms = new List<IEntity>().AsReadOnly();
+            Assert.IsTrue(testMultimap.TryGetValue(typeof(Platform), out actualPlatforms), TRYGETVALUE_FAILED);
+            Assert.IsTrue(actualPlatforms.All(e => expectedPlatforms.Contains(e)), TRYGETVALUE_FAILED);
+            Assert.AreEqual(2, actualPlatforms.Count, NOT_SAME_NUMBER_ELEMENTS);
+            IReadOnlyCollection<IEntity> actualRolling = new List<IEntity>().AsReadOnly();
+            Assert.IsFalse(testMultimap.TryGetValue(typeof(RollingEnemy), out actualRolling), TRYGETVALUE_SUCCEEDED);
+            Assert.IsNull(actualRolling, TRYGETVALUE_SUCCEEDED);
             multimap.AddRange(typeof(RollingEnemy), CreateCoupleRollingEnemies());
             Assert.AreEqual(2, multimap[typeof(RollingEnemy)].Count, NOT_SAME_NUMBER_ELEMENTS);
         }
@@ -157,8 +167,7 @@ namespace jmpcoon.test
             testMultimap.Remove(typeof(Player), player);
             Assert.AreEqual(2, testMultimap.Values.SelectMany(e => e).Count(), NOT_SAME_NUMBER_ELEMENTS);
             var values = testMultimap.Values.SelectMany(e => e).ToList();
-            Assert.IsTrue(new List<Platform> { firstPlatform, secondPlatform }.All(e => values.Contains(e)),
-                          NOT_SAME_ELEMENTS);
+            Assert.IsTrue(new List<Platform> { firstPlatform, secondPlatform }.All(e => values.Contains(e)), NOT_SAME_ELEMENTS);
             testMultimap.PutInstance(typeof(Player), CreateSecondPlayer());
             testMultimap.Remove(typeof(Platform));
             Assert.AreEqual(0, testMultimap.GetInstances<Platform>(typeof(Platform)).Count, MORE_INSTANCES);
