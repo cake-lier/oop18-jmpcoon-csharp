@@ -32,10 +32,12 @@ namespace jmpcoon.model.entities
                                              + Position.Y + "); Dimensions: " + Dimensions.Width + "x" + Dimensions.Height
                                              + "; Angle: " + Angle;
 
+
+
+        public override int GetHashCode() => 169287901 + EqualityComparer<IPhysicalBody>.Default.GetHashCode(PhysicalBody);
+
         public override bool Equals(object obj)
             => obj is AbstractEntity entity
                && EqualityComparer<IPhysicalBody>.Default.Equals(PhysicalBody, entity.PhysicalBody);
-
-        public override int GetHashCode() => 169287901 + EqualityComparer<IPhysicalBody>.Default.GetHashCode(PhysicalBody);
     }
 }

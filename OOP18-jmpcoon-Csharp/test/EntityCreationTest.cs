@@ -73,7 +73,7 @@ namespace jmpcoon.test
             IEntityBuilder<RollingEnemy> rollingBuilder = EntityBuilderUtils.GetRollingEnemyBuilder()
                                                                             .SetDimensions(STD_CIRCULAR_DIMENSIONS)
                                                                             .SetPosition(STD_POSITION)
-                                                                            .SetFactory(this.factory)
+                                                                            .SetFactory(factory)
                                                                             .SetAngle(STD_ANGLE)
                                                                             .SetShape(BodyShape.CIRCLE);
             RollingEnemy rollingEnemy = rollingBuilder.Build();

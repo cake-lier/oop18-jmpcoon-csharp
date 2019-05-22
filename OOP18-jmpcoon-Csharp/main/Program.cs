@@ -38,6 +38,8 @@ namespace jmpcoon
             gameWorld.GetCurrentEvents().ToList().ForEach(e => Console.WriteLine(e));
             Console.WriteLine("");
             Console.WriteLine("Score: " + gameWorld.Score + ", Player Lives: " + gameWorld.GetPlayerLives());
+            Console.WriteLine("Player won: " + gameWorld.HasPlayerWon() + ", Player lose: " + gameWorld.IsGameOver());
+            gameWorld.MovePlayer(MovementType.JUMP);
             gameWorld.Update();
             Console.WriteLine("---\nWorld after update: ");
             gameWorld.GetAliveEntities().ToList().ForEach(Console.WriteLine);
@@ -47,6 +49,7 @@ namespace jmpcoon
             gameWorld.GetCurrentEvents().ToList().ForEach(e => Console.WriteLine(e));
             Console.WriteLine("");
             Console.WriteLine("Score: " + gameWorld.Score + ", Player Lives: " + gameWorld.GetPlayerLives());
+            Console.WriteLine("Player won: " + gameWorld.HasPlayerWon() + ", Player lose: " + gameWorld.IsGameOver());
         }
     }
 }
