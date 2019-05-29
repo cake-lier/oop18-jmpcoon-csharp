@@ -99,8 +99,8 @@ namespace jmpcoon.model.entities
         protected abstract TEntity BuildEntity();
 
         protected StaticPhysicalBody CreateStaticPhysicalBody(EntityType type)
-            => Factory.CreateStaticPhysicalBody(Center.Value, Angle.Value, Shape.Value, Dimensions.Value.Width, Dimensions.Value.Height,
-                                                type, PowerUpType);
+            => Factory.CreateStaticPhysicalBody(Center.Value, Angle.Value, Shape.Value, Dimensions.Value.Width,
+                                                Dimensions.Value.Height, type, PowerUpType);
 
         protected DynamicPhysicalBody CreateDynamicPhysicalBody(EntityType type)
             => Factory.CreateDynamicPhysicalBody(Center.Value, Angle.Value, Shape.Value, Dimensions.Value.Width,
